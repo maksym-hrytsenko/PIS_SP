@@ -1,0 +1,90 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class Customer {
+  +id: int
+  +name: string
+  +email: string
+  +address: string
+  +createOrder()
+}
+
+class Cart {
+  +id: int
+  +addProduct()
+  +removeProduct()
+}
+
+class Order {
+  +id: int
+  +status: OrderStatus
+  +createdAt: datetime
+  +calculateTotal()
+}
+
+class OrderItem {
+  +quantity: int
+}
+
+class Product {
+  +id: int
+  +name: string
+  +price: float
+}
+
+class Payment {
+  +id: int
+  +status: PaymentStatus
+  +processPayment()
+}
+
+class Delivery {
+  +id: int
+  +status: DeliveryStatus
+}
+
+class Courier {
+  +id: int
+  +name: string
+}
+
+class Warehouse {
+  +id: int
+}
+
+enum OrderStatus {
+  CREATED
+  PAID
+  PREPARING
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+enum DeliveryStatus {
+  READY
+  IN_PROGRESS
+  DELIVERED
+}
+
+' RELATIONS
+
+Customer "1" -- "1" Cart
+Customer "1" -- "0..*" Order
+
+Order "1" *-- "1..*" OrderItem
+OrderItem "*" --> "1" Product
+
+Order "1" --> "1" Payment
+Order "1" --> "0..1" Delivery
+
+Delivery "*" --> "1" Courier
+
+Warehouse "1" --> "*" Product
+
+@enduml
