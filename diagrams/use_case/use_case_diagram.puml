@@ -1,0 +1,65 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+
+actor Customer
+actor Courier
+actor "Warehouse Worker" as Worker
+actor Admin
+actor "Payment System" as Payment
+
+rectangle "Online Grocery Delivery System" {
+
+  ' -------- APPLICATION --------
+  package "Application" {
+
+    Customer --> (Browse Products)
+    Customer --> (Manage Cart)
+    Customer --> (Create Order)
+    Customer --> (Track Order)
+    Customer --> (Cancel Order)
+
+    (Create Order) --> (Select Delivery Slot) : <<include>>
+    (Create Order) --> (Provide Delivery Address) : <<include>>
+    (Create Order) --> (Choose Payment Method) : <<include>>
+
+    (Choose Payment Method) --> (Pay Online) : <<extend>>
+    (Choose Payment Method) --> (Pay on Delivery) : <<extend>>
+
+    (Pay Online) --> Payment
+  }
+
+  ' -------- WAREHOUSE --------
+  package "Warehouse" {
+
+    Worker --> (View Orders)
+    Worker --> (Prepare Order)
+    Worker --> (Access Inventory)
+
+    (Prepare Order) --> (Handle Missing Products) : <<include>>
+    (Prepare Order) --> (Mark Order Ready) : <<include>>
+  }
+
+  ' -------- DELIVERY --------
+
+  Courier --> (View Deliveries)
+  Courier --> (Pick Up Order)
+  Courier --> (Deliver Order)
+
+  (Deliver Order) --> (Confirm Delivery) : <<include>>
+  (Deliver Order) --> (Receive Payment) : <<extend>>
+  (Deliver Order) --> (Receive Order) : <<include>>
+
+  Customer --> (Receive Order)
+
+  (Receive Payment) --> (Cash Payment)
+  (Receive Payment) --> (Card Payment)
+
+  ' -------- ADMIN --------
+
+  Admin --> (Manage Users)
+  Admin --> (Manage Products)
+  Admin --> (Manage Orders)
+}
+
+@enduml
