@@ -1,0 +1,34 @@
+@startuml
+
+actor Customer
+participant "Application" as App
+participant "Cart"
+participant "Order"
+participant "Payment Service" as Payment
+participant "Warehouse System" as Warehouse
+
+Customer -> App : browseProducts()
+Customer -> App : addToCart(product)
+
+App -> Cart : addProduct(product)
+
+Customer -> App : createOrder()
+
+App -> Cart : getItems()
+Cart --> App : items
+
+App -> Order : create(items)
+
+Order -> Order : calculateTotal()
+
+App -> Payment : processPayment()
+
+Payment --> App : paymentConfirmed
+
+App -> Warehouse : sendOrder(order)
+
+Warehouse --> App : orderAccepted
+
+App --> Customer : orderConfirmation
+
+@enduml
