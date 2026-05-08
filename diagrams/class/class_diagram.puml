@@ -6,6 +6,8 @@ class Customer {
   +name: string
   +email: string
   +address: string
+  +phoneNumber: string
+  +subscriptionType: string
   +createOrder()
 }
 
@@ -13,43 +15,66 @@ class Cart {
   +id: int
   +addProduct()
   +removeProduct()
+  +checkout()
+}
+
+class CartItem {
+  +quantity: int
+  +currentPrice: float
+  +allowSubstitution: bool
 }
 
 class Order {
   +id: int
   +status: OrderStatus
   +createdAt: datetime
+  +deliveryTime: datetime
+  +totalPrice: float
   +calculateTotal()
+  +cancel()
 }
 
 class OrderItem {
   +quantity: int
+  +priceAtPurchase: float
+  +allowSubstitution: bool
 }
 
 class Product {
   +id: int
   +name: string
   +price: float
+  +stockQuantity: int
+  +weightBased: bool
 }
 
 class Payment {
   +id: int
   +status: PaymentStatus
+  +method: PaymentMethod
+  +amount: float
   +processPayment()
+  +refund()
 }
 
 class Delivery {
   +id: int
   +status: DeliveryStatus
+  +deliveryTime: datetime
+  +address: string
+  +finalPrice: float
+  +confirm()
 }
 
 class Courier {
   +id: int
   +name: string
+  +phoneNumber: string
 }
 
 class Warehouse {
   +id: int
+  +location: string
 }
 
 enum OrderStatus {
@@ -72,16 +97,25 @@ enum DeliveryStatus {
   DELIVERED
 }
 
+enum PaymentMethod {
+  ONLINE
+  CASH
+}
+
 ' RELATIONS
 
 Customer "1" -- "1" Cart
 Customer "1" -- "0..*" Order
+Customer "1" -- "0..*" Delivery
+
+Cart "1" *-- "0..*" CartItem
+CartItem "*" --> "1" Product
 
 Order "1" *-- "1..*" OrderItem
 OrderItem "*" --> "1" Product
 
 Order "1" --> "1" Payment
-Order "1" --> "0..1" Delivery
+Order "1" --> "1" Delivery
 
 Delivery "*" --> "1" Courier
 
