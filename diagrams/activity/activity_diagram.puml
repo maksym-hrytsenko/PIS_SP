@@ -1,0 +1,73 @@
+@startuml
+
+start
+
+:Browse products;
+:Add products to cart;
+
+:For each product:
+set substitution option;
+
+:Select delivery time slot;
+
+:Create order;
+
+:Calculate total price;
+:Add +15% reserve;
+
+:Choose payment method;
+
+if (Online payment?) then (yes)
+
+  repeat
+    :Process payment;
+  repeat while (Payment successful?) is (no)
+
+else (no)
+
+  :Mark as pay on delivery;
+
+endif
+
+:Send order to warehouse;
+
+' -------- WAREHOUSE --------
+
+:Prepare order in warehouse;
+
+if (All products available?) then (yes)
+
+  :Mark order as ready;
+
+else (no)
+
+  if (Substitution allowed?) then (yes)
+    :Replace missing products;
+  else (no)
+    :Remove unavailable products;
+  endif
+
+  :Recalculate final price;
+
+  if (Online payment?) then (yes)
+    :Refund difference;
+  else (no)
+    :Notify courier about new price;
+  endif
+
+endif
+
+' -------- DELIVERY --------
+
+:Assign courier;
+:Deliver order;
+
+if (Payment on delivery?) then (yes)
+  :Receive payment;
+endif
+
+:Confirm delivery;
+
+stop
+
+@enduml
