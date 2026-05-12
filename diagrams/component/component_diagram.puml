@@ -1,0 +1,104 @@
+@startuml
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName Arial
+
+package "Client Layer" {
+
+  component "Web/Mobile Application" as WebApp
+  component "Admin Dashboard" as AdminDashboard
+}
+
+package "Order Subsystem" {
+
+  interface "Order API" as OrderAPI
+
+  component "Order Service" as OrderService {
+
+    component "Cart Manager" as CartManager
+    component "Price Calculator" as PriceCalculator
+  }
+}
+
+package "Warehouse Subsystem" {
+
+  interface "Inventory API" as InventoryAPI
+
+  component "Warehouse Service" as WarehouseService {
+
+    component "Substitution Engine" as SubstitutionEngine
+  }
+}
+
+package "Logistics Subsystem" {
+
+  interface "Delivery API" as DeliveryAPI
+
+  component "Delivery Service" as DeliveryService
+}
+
+package "Administration Subsystem" {
+
+  interface "Admin API" as AdminAPI
+
+  component "Admin Service" as AdminService {
+
+    component "User Manager" as UserManager
+    component "Product Catalog Editor" as ProductCatalogEditor
+  }
+}
+
+package "Integration" {
+
+  component "Payment Adapter" as PaymentAdapter
+}
+
+package "Persistence Layer" {
+
+  database "Order & User DB" as OrderDB
+  database "Product & Inventory DB" as ProductDB
+}
+
+component "External Payment Provider" as ExternalPaymentProvider
+
+' ---------------- CONNECTIONS ----------------
+
+WebApp --> OrderAPI
+WebApp --> InventoryAPI : browse
+
+AdminDashboard --> AdminAPI
+
+OrderAPI --> OrderService
+
+OrderService --> CartManager
+OrderService --> PriceCalculator : 15% reserve [Activity]
+
+OrderService ..> PaymentAdapter : process transaction
+
+PaymentAdapter --> ExternalPaymentProvider
+
+OrderService --> InventoryAPI : send order
+
+InventoryAPI --> WarehouseService
+
+WarehouseService --> SubstitutionEngine : substitution logic [Sequence]
+
+WarehouseService ..> DeliveryAPI : mark ready
+
+DeliveryAPI --> DeliveryService
+
+DeliveryService --> OrderDB : update delivery status
+
+AdminAPI --> AdminService
+
+AdminService --> UserManager
+AdminService --> ProductCatalogEditor
+
+AdminService --> OrderDB : manage users/orders
+AdminService --> ProductDB : update catalog
+
+WarehouseService --> ProductDB
+
+OrderService --> OrderDB
+
+@enduml
